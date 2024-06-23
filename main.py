@@ -9,22 +9,29 @@ logging.basicConfig(
 )
 
 config = dotenv_values(".env")
-def fix_string(db, comparableStr):
-    new_str = db.split("\n")
-    for x in new_str:
-        k =x.split(",")
-        print(k[0])
-
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE)->None:
     #db sect
-    str = f"id:{update.effective_user.id}, name: {update.effective_user.first_name} {update.effective_user.last_name}, username:{update.effective_user.username} \n"
-    f = open("db.txt", "a")
-    f.write(str)
-    f = open("db.txt", "r")
-    fix_string(f.read(), update.effective_user.id)
-    #db ends
-    await context.bot.send_message(chat_id=update.effective_chat.id, text="sei stato registrato >:(")
+    print("upd",update)
+    strPP = f"id:{update.effective_user.id}, name: {update.effective_user.first_name} {update.effective_user.last_name}, username:{update.effective_user.username} \n"
+    file = open("db.txt", "a")
+    file = open("db.txt", "r")
+    db= file.read()
+    new_str = db.split("\n")
+    arr=[]
+    for x in new_str:
+        k =x.split(",")
+        arr.append(k[0].replace("id:",""))
+    msg = "sei stato registrato >:("
+    if str(update.effective_user.id) in arr:
+        msg="sei already registrato!"
+    else:
+        print("miaoo")
+        file = open("db.txt", "a")
+        file.write(strPP)
+        await context.bot.send_message(chat_id=update.effective_chat.id, text=msg)
+    
+
 
 if __name__ == '__main__':
     application = ApplicationBuilder().token(config['BOT_TOKEN']).build()
